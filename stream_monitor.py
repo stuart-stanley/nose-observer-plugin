@@ -1,6 +1,7 @@
 import logging
 import os
 from nose.plugins import Plugin
+from stream_sources import LoggingMarker
 import sys
 
 class StreamMonitorPlugin(Plugin):
@@ -10,6 +11,7 @@ class StreamMonitorPlugin(Plugin):
         self.__print_to = None
         # Uncomment next line to view steps to console live
         # self.__print_to = sys.stderr   
+        self.__stream_plugins = []
         super(StreamMonitorPlugin, self).__init__(*args, **kwargs)
 
     def _self_test_print_step_enable(self):
@@ -44,8 +46,13 @@ class StreamMonitorPlugin(Plugin):
 
     def begin(self):
         self.__take_step('begin')
+        # tood: check class "enabled_for_nose()"
+        self.__stream_plugins.append(LoggingMarker())
+        for pg in self.__stream_plugins:
+            pg.handle_begin()
 
     def beforeTest(self, test):
+        # order is beforeTest->startTest->stopTest->afterTest
         self.__take_step('beforeTest', test=test)
 
     def afterTest(self, test):
@@ -53,8 +60,10 @@ class StreamMonitorPlugin(Plugin):
 
     def startTest(self, test):
         self.__take_step('startTest', test=test)
+        for pg in self.__stream_plugins:
+            pg.handle_start_test(test)
 
     def stopTest(self, test):
         self.__take_step('stopTest', test=test)
-
-        
+        for pg in self.__stream_plugins:
+            pg.handle_stop_test(test)

@@ -16,7 +16,8 @@ setup(
     author_email = 'stuart.stanley@dell.com',
     description = 'Example nose plugin',
     license = 'Apache 2.0',
-    py_modules = ['stream_monitor'],
+    py_modules = ['stream_monitor', 'infra_logging'],
+    packages = ['stream_sources'],
     entry_points = {
         'nose.plugins.0.10': [
             'stream_monitor = stream_monitor:StreamMonitorPlugin'

@@ -1,4 +1,5 @@
 .venv
+log_output/
 myenv_*
 build/
 dist/
